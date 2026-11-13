@@ -14,11 +14,10 @@
 - Animaciones propias: sentadilla, dominadas, salto al cajón y prensa 45°, con músculos seccionados, silueta objetivo e indicador de ángulo.
 
 ## ✅ v0.2
-- Animaciones de toda la semana del Bloque 1 (39 en total), reutilizadas en las alternativas con el mismo movimiento.
+- Animaciones de toda la semana del Bloque 1 y de todas las alternativas: 70 animaciones propias, todo el catálogo cubierto.
 - Pantalla de inicio rediseñada: un solo botón principal y tira semanal legible.
 
 ## 🔜 Próximo
-- [ ] Animaciones de las alternativas que todavía no tienen (jalón, búlgara, hack squat, curl femoral, etc.).
 - [ ] Variantes de ejecución donde cambian el músculo (prensa: pies altos/bajos; dominadas: ancho de agarre; sentadilla: postura).
 - [ ] Rutinas de los Bloques 2 (Fuerza) y 3 (Potencia) con rotación de variantes de los básicos.
 - [ ] Mover una sesión de gym a otro día desde la vista Semana.

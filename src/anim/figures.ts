@@ -128,7 +128,10 @@ function frontBody(p: Pose): FBody {
   const lE: Pt = [lS[0] - 26 * ak * s(p.aL), sy + 26 * ak * c(p.aL)], rE: Pt = [rS[0] + 26 * ak * s(p.aR), sy + 26 * ak * c(p.aR)];
   const lHd: Pt = [lE[0] - 24 * ak * s(p.bL), lE[1] + 24 * ak * c(p.bL)], rHd: Pt = [rE[0] + 24 * ak * s(p.bR), rE[1] + 24 * ak * c(p.bR)];
   const lA: Pt = [p.fxL, p.fyL], rA: Pt = [p.fxR, p.fyR];
-  return { cx, sy, hy, tk, lS, rS, lE, rE, lHd, rHd, lH, rH, lA, rA, lK: ik(lH, lA, 40, 40, 1), rK: ik(rH, rA, 40, 40, -1), head: [cx, sy + (p.ho ?? -17)] };
+  // ks < 1: muslos hacia la cámara (sentado), las rodillas se abren menos
+  const ks = p.ks ?? 1;
+  const knee = (h: Pt, a: Pt, sd: number): Pt => { const k = ik(h, a, 40, 40, sd), m: Pt = [(h[0] + a[0]) / 2, (h[1] + a[1]) / 2]; return [m[0] + (k[0] - m[0]) * ks, m[1] + (k[1] - m[1]) * ks]; };
+  return { cx, sy, hy, tk, lS, rS, lE, rE, lHd, rHd, lH, rH, lA, rA, lK: knee(lH, lA, 1), rK: knee(rH, rA, -1), head: [cx, sy + (p.ho ?? -17)] };
 }
 function front(B: FBody, M: string[], o: { after?: string; between?: string } = {}) {
   const { cx, sy, hy, tk } = B;
@@ -583,6 +586,290 @@ const sideplank = sideAnim({
   steps: [[spLo, 400, 'Codo bajo el hombro'], [spHi, 700, 'Sube la cadera'], [spHi, 2000, 'Aguanta en línea recta'], [spLo, 700, 'Baja controlado']],
 });
 
+
+/* ═════════ Alternativas ═════════ */
+
+/* ── Press de pecho en máquina (sentado) ── */
+const seatBack = (H: Pt, t: number) => quad(mv(mv(H, t, 26), t - 90, 11), t, 66, 10, 'cushion') + quad(mv(H, 180, 9), 90, 34, 8, 'cushion') + ln(mv(H, 180, 14), [H[0], 205], 'mach');
+const mcIn = { x: 80, y: 165, t: -5, th: 85, sh: 180, f: 90, ua: 235, fa: 90, hd: 0 };
+const mcOut = P(mcIn, { ua: 88, fa: 90 });
+const machinechest = sideAnim({
+  anchor: 'hip', mus: ['chest', '~triceps'], ghost: mcOut, ghostLabel: 'Brazos extendidos',
+  steps: [[mcIn, 400, 'Agarres a media altura del pecho'], [mcOut, 900, 'Empuja sin despegar la espalda'], [mcOut, 300, 'Sin bloquear de golpe'], [mcIn, 1500, 'Regresa controlado']],
+  bg: (B) => seatBack(B.hip, -5) + ln([176, 30], [176, 205], 'mach'), after: (B) => ln(B.hand, [176, B.hand[1] - 30], 'mach thin') + circ(B.hand, 4, 'head'),
+});
+
+/* ── Press declinado ── */
+const decTop = { x: 120, y: 140, t: -110, th: 120, sh: 170, f: 90, ua: 10, fa: 5, hd: 0 };
+const decBot = P(decTop, { ua: 115, fa: -25 });
+const decline = sideAnim({
+  anchor: 'hip', mus: ['chest', '~triceps'], ghost: decBot, ghostLabel: 'Barra al pecho bajo',
+  steps: [[decTop, 500, 'Pies bien sujetos'], [decBot, 1700, 'Baja a la parte baja del pecho'], [decBot, 300, 'Sin rebotar'], [decTop, 1000, 'Empuja arriba']],
+  bg: (B) => quad(mv(mv(B.hip, -110, 18), 160, 11), -110, 86, 9, 'cushion') + ln(mv(B.hip, 160, 16), [B.hip[0] + 4, 205], 'mach') + ln([60, 172], [60, 205], 'mach thin'),
+  after: (B) => plate(B.hand) + circ(add(B.ankle, [6, -6]), 6, 'cushion'),
+});
+
+/* ── Press francés ── */
+const skTop = P(benchTop, { ua: -10, fa: -5 });
+const skBot = P(benchTop, { ua: -10, fa: -135 });
+const skull = sideAnim({
+  anchor: 'hip', mus: ['triceps'], ghost: skBot, ghostLabel: 'Barra a la frente',
+  steps: [[skTop, 500, 'Brazos verticales, codos fijos'], [skBot, 1600, 'Baja la barra hacia la frente'], [skBot, 250, 'Solo se mueven los codos'], [skTop, 1000, 'Extiende']],
+  bg: () => BENCH, after: (B) => plate(B.hand, 10),
+});
+
+/* ── Extensión con mancuerna sobre la cabeza ── */
+const doTop = P(S, { ua: 5, fa: 5 });
+const doBot = P(S, { ua: 5, fa: -150 });
+const dboverhead = sideAnim({
+  mus: ['triceps'], ghost: doTop, ghostLabel: 'Extensión completa',
+  steps: [[doTop, 400, 'Mancuerna arriba con ambas manos'], [doBot, 1500, 'Baja detrás de la cabeza'], [doBot, 300, 'Codos al frente'], [doTop, 1000, 'Extiende sin arquear la espalda']],
+  after: (B) => dbV(B.hand),
+});
+
+/* ── Plancha / Body saw ── */
+const plHi = { x: 60, y: 203, t: -75, th: 105, sh: 105, f: 120, ua: 180, fa: 90, hd: 0 };
+const plOk = P(plHi, { t: -80, th: 100, sh: 100 });
+const plank = sideAnim({
+  anchor: 'elbow', mus: ['abs', '~glute'], ghost: plOk, ghostLabel: 'Cuerpo en línea recta',
+  steps: [[plHi, 500, 'Codos bajo los hombros'], [plOk, 600, 'Aprieta glúteos y abdomen'], [plOk, 2400, 'Línea recta: aguanta'], [plHi, 500, 'Respira y vuelve a alinear']],
+});
+const bsBack = P(plOk, { ua: 210 });
+const bsFwd = P(plOk, { ua: 150 });
+const bodysaw = sideAnim({
+  anchor: 'elbow', mus: ['abs'], ghost: bsBack, ghostLabel: 'Desplazamiento atrás',
+  steps: [[bsFwd, 400, 'En plancha sobre antebrazos'], [bsBack, 1100, 'Desliza el cuerpo atrás desde los hombros'], [bsBack, 300, 'Espalda neutra'], [bsFwd, 1100, 'Regresa adelante']],
+  after: (B) => rect(B.toe[0] - 7, 202, 14, 4, 'mach', 2),
+});
+
+/* ── Squat jump / Salto largo ── */
+const sjHalf = P(S, { t: 35, th: 115, sh: 205, ua: 250, fa: 250, hd: -15 });
+const sjAir = P(S, { y: 180, f: 150, ua: 20, fa: 15 });
+const squatjump = sideAnim({
+  mus: ['quad', 'glute'], ghost: sjHalf, ghostLabel: 'Media sentadilla',
+  steps: [[S, 400, 'De pie, pies a la anchura de la cadera'], [sjHalf, 500, 'Media sentadilla, brazos atrás'], [sjAir, 260, 'Salto máximo'], [sjHalf, 300, 'Aterriza suave'], [S, 600, 'Reinicia la posición']],
+});
+const bjump = {
+  stand: P(S, { x: 45 }), load: P(S, { x: 45, t: 45, th: 125, sh: 205, ua: 250, fa: 250, hd: -20 }),
+  air: P(S, { x: 95, y: 178, t: 30, th: 150, sh: 170, f: 130, ua: 40, fa: 30, hd: -10 }),
+  land: P(S, { x: 140, t: 40, th: 125, sh: 205, ua: 120, fa: 100, hd: -15 }),
+};
+const broadjump = sideAnim({
+  mus: ['quad', 'glute'], fade: true, ghost: bjump.land, ghostLabel: 'Aterrizaje estable',
+  steps: [[bjump.stand, 400, 'Pies juntos'], [bjump.load, 450, 'Brazos atrás, cadera atrás'], [bjump.air, 280, 'Salta hacia adelante extendiendo la cadera'], [bjump.land, 260, 'Aterriza suave'], [bjump.land, 1000, 'Estable antes del siguiente']],
+});
+
+/* ── Hack squat (máquina) ── */
+function hackParts(p: Pose) {
+  const A: Pt = [132, 198], H = mv(A, -20, p.s), K = ik(H, A, 40, 40, -1), Sh = mv(H, -20, 46);
+  const hand = mv(Sh, 160, 6), E = ik(Sh, hand, 26, 24, 1), toe = mv(A, 80, 14);
+  const B: Body = { hip: H, ankle: A, knee: K, shoulder: Sh, head: mv(Sh, -10, 15), hand, elbow: E, toe, knee2: K, ankle2: A, toe2: toe, elbow2: E, hand2: hand };
+  return { A, H, K, B };
+}
+const hack: AnimDef = {
+  view: 'Vista lateral', ghost: { s: 54 }, ghostLabel: 'Rodilla a ~90°',
+  tl: tl([[{ s: 78 }, 400, 'Espalda pegada al respaldo'], [{ s: 54 }, 1800, 'Baja hasta al menos 90° de rodilla'], [{ s: 54 }, 250, 'Talones apoyados'], [{ s: 78 }, 1000, 'Empuja con todo el pie']]),
+  render: (p) => {
+    const { A, H, K, B } = hackParts(p);
+    const r0 = mv(mv(A, -20, 30), -110, 22), r1 = mv(mv(A, -20, 160), -110, 22);
+    const bg = GROUND + ln(r0, r1, 'mach') + ln(r0, [r0[0], 205], 'mach thin') + quad(mv(A, 80, 6), 80, 34, 6, 'platform') + quad(mv(mv(H, -20, 24), -110, 11), -20, 66, 10, 'cushion');
+    return { bg, fig: side(B, ['quad', 'glute'], { off: [-5, -3] }), fg: angleMark(K, H, A) };
+  },
+};
+
+/* ── Peso muerto con trap bar ── */
+const tbBot = P(S, { t: 45, th: 115, sh: 200, hd: -15 });
+const trapbar = sideAnim({
+  mus: ['glute', 'quad', '~ham'], ghost: tbBot, ghostLabel: 'Posición de salida',
+  steps: [[tbBot, 500, 'Cadera algo más alta que en sentadilla, pecho arriba'], [S, 1000, 'Empuja el suelo y extiende cadera y rodillas'], [S, 300, 'Arriba, glúteos apretados'], [tbBot, 1300, 'Baja controlado']],
+  after: (B) => plate(B.hand) + ln(add(B.hand, [-16, 0]), add(B.hand, [16, 0]), 'mach thin'),
+});
+
+/* ── Good morning ── */
+const gmTop = { ...squatStand, th: 182, sh: 178 };
+const gmBot = P(gmTop, { t: 70, th: 160, sh: 176, ua: 285, fa: 90, hd: -20 });
+const goodmorning = sideAnim({
+  mus: ['ham', 'lumbar', '~glute'], ghost: gmBot, ghostLabel: 'Bisagra de cadera',
+  steps: [[gmTop, 500, 'Barra en el trapecio'], [gmBot, 1800, 'Cadera atrás con la espalda neutra'], [gmBot, 300, 'Poco peso, mucho control'], [gmTop, 1100, 'Extiende la cadera']],
+  after: (B, p) => { const b = mv(B.shoulder, p.t - 90, 5); return plate(b) + circ(B.head, 10, 'head'); },
+});
+
+/* ── Gemelo en prensa ── */
+function pressCalf(p: Pose) {
+  const H: Pt = [62, 182], A0 = mv(H, 45, 76), T = mv(A0, -45, 12), A = mv(T, 135 + p.ph, 12);
+  const K = ik(H, A, 40, 40, -1), Sh = mv(H, -55, 46), hand: Pt = [H[0] - 2, H[1] + 4], E = ik(Sh, hand, 26, 24, 1);
+  const B: Body = { hip: H, ankle: A, knee: K, shoulder: Sh, head: mv(Sh, -25, 15), hand, elbow: E, toe: T, knee2: K, ankle2: A, toe2: T, elbow2: E, hand2: hand };
+  return { B, hand };
+}
+const legpresscalf: AnimDef = {
+  view: 'Vista lateral', ghost: { ph: 40 }, ghostLabel: 'Punta máxima',
+  tl: tl([[{ ph: -15 }, 800, 'Talón estirado, rodillas casi extendidas'], [{ ph: 40 }, 800, 'Empuja con la punta del pie'], [{ ph: 40 }, 400, 'Aprieta'], [{ ph: -15 }, 1100, 'Baja sin rebotar']]),
+  render: (p) => { const { B, hand } = pressCalf(p); return { bg: pressMachine({ s: 76 }), fig: side(B, ['calf'], { off: [-5, -4] }) + circ(hand, 4, 'head') }; },
+};
+
+/* ── Jalón al pecho (frontal, sentado) ── */
+const lpUp = P(FS, { hy: 150, ks: 0.3, fxL: 96, fyL: 205, fxR: 124, fyR: 205, aL: 160, bL: 175, aR: 160, bR: 175 });
+const lpDown = P(lpUp, { aL: 30, bL: 150, aR: 30, bR: 150 });
+const latpulldown = frontAnim({
+  view: 'Vista frontal (sentado)', mus: ['lats', '~biceps'], ghost: lpDown, ghostLabel: 'Barra al pecho',
+  steps: [[lpUp, 500, 'Agarre amplio, brazos estirados'], [lpDown, 1000, 'Lleva la barra a la parte alta del pecho'], [lpDown, 400, 'Tira con los codos'], [lpUp, 1500, 'Sube controlado']],
+  bg: () => rect(88, 152, 44, 8, 'cushion') + ln([110, 160], [110, 205], 'mach') + ln([110, 4], [110, 12], 'mach'),
+  after: (B) => ln([B.lHd[0] - 12, B.lHd[1]], [B.rHd[0] + 12, B.rHd[1]], 'mach') + ln([110, 10], [110, B.lHd[1]], 'cable') + rect(90, B.lK[1] - 12, 40, 7, 'cushion'),
+});
+
+/* ── Remo con mancuerna ── */
+const drDown = { x: 100, y: 205, t: 85, th: 190, sh: 180, f: 90, th2: 160, sh2: 270, f2: 270, ua: 180, fa: 180, ua2: 180, fa2: 180, hd: -10 };
+const drUp = P(drDown, { ua: 245 });
+const dbrow = sideAnim({
+  mus: ['back', '~biceps'], ghost: drUp, ghostLabel: 'Codo hacia la cadera',
+  steps: [[drDown, 400, 'Rodilla y mano en el banco, espalda plana'], [drUp, 900, 'Lleva el codo hacia la cadera'], [drUp, 300, 'Sin girar el torso'], [drDown, 1300, 'Baja controlado']],
+  bg: () => rect(66, 166, 126, 9, 'cushion') + ln([80, 175], [80, 205], 'mach') + ln([180, 175], [180, 205], 'mach'),
+  after: (B) => dbV(B.hand),
+});
+
+/* ── Remo con apoyo en pecho ── */
+const crowDown = { x: 80, y: 128, t: 45, th: 200, sh: 190, f: 110, ua: 180, fa: 180, hd: -10 };
+const crowUp = P(crowDown, { ua: 245 });
+const chestrow = sideAnim({
+  anchor: 'hip', mus: ['back', '~biceps'], ghost: crowUp, ghostLabel: 'Codos atrás',
+  steps: [[crowDown, 400, 'Pecho apoyado en el banco inclinado'], [crowUp, 900, 'Tira con los codos hacia atrás'], [crowUp, 300, 'Junta las escápulas'], [crowDown, 1300, 'Baja controlado']],
+  bg: (B) => quad(mv(mv(B.hip, 45, 26), 135, 11), 45, 60, 10, 'cushion') + ln(mv(B.hip, 135, 16), [B.hip[0] + 14, 205], 'mach'),
+  after: (B) => dbV(B.hand),
+});
+
+/* ── Elevación de piernas en paralelas ── */
+const dlDown = { x: 110, y: 112, t: 0, th: 180, sh: 180, f: 150, ua: 180, fa: 180, hd: 0 };
+const dlUp = P(dlDown, { t: -8, th: 70, sh: 165, f: 120 });
+const dipraise = sideAnim({
+  anchor: 'hand', mus: ['abs'], ghost: dlUp, ghostLabel: 'Rodillas al pecho',
+  steps: [[dlDown, 400, 'Brazos firmes, espalda apoyada'], [dlUp, 900, 'Sube las rodillas al pecho'], [dlUp, 300, 'Enrolla la pelvis'], [dlDown, 1300, 'Baja sin balancear']],
+  bg: () => ln([66, 114], [154, 114], 'mach') + ln([76, 114], [76, 205], 'mach thin') + ln([144, 114], [144, 205], 'mach thin'),
+});
+
+/* ── Crunch inverso ── */
+const rcLo = { x: 70, y: 192, t: -90, th: 60, sh: 120, f: 30, ua: 95, fa: 90, hd: 10 };
+const rcHi = P(rcLo, { t: -105, th: -20, sh: 60, f: 0 });
+const reversecrunch = sideAnim({
+  anchor: 'shoulder', mus: ['abs'], ghost: rcHi, ghostLabel: 'Cadera despegada',
+  steps: [[rcLo, 400, 'Tumbado, brazos a los lados'], [rcHi, 900, 'Rodillas al pecho despegando la cadera'], [rcHi, 300, 'Sin impulso de piernas'], [rcLo, 1300, 'Baja despacio']],
+});
+
+/* ── Saltos laterales a dos pies (frontal) ── */
+const l2A = P(FS, { cx: 86, hy: 128, fxL: 80, fxR: 92, aL: 20, bL: 30, aR: 20, bR: 30 });
+const l2Air = P(l2A, { cx: 110, hy: 108, fxL: 104, fyL: 186, fxR: 116, fyR: 186 });
+const l2B = P(l2A, { cx: 134, fxL: 128, fxR: 140 });
+const lateralhop2 = frontAnim({
+  mus: ['quads', '~gmed'], ghost: l2B, ghostLabel: 'Aterrizaje',
+  steps: [[l2A, 160, 'Pies juntos'], [l2Air, 160, 'Salta sobre la línea'], [l2B, 160, 'Contacto corto'], [l2B, 120, 'Rebota'], [l2Air, 160, 'Regresa'], [l2A, 160, 'Contacto corto']],
+  bg: () => ln([110, 198], [110, 212], 'band'),
+});
+
+/* ── Sentadilla búlgara ── */
+const bgTop = { x: 125, y: 205, t: 15, th: 175, sh: 180, f: 90, th2: 200, sh2: 280, f2: 270, ua: 180, fa: 180, hd: 0 };
+const bgBot = P(bgTop, { th: 100, sh: 195, th2: 210, sh2: 351, hd: -5 });
+const bulgarian = sideAnim({
+  mus: ['quad', 'glute'], ghost: bgBot, ghostLabel: 'Rodilla trasera cerca del suelo',
+  steps: [[bgTop, 500, 'Pie trasero en el banco'], [bgBot, 1600, 'Baja recto, torso un poco inclinado'], [bgBot, 300, 'Rodilla trasera casi al suelo'], [bgTop, 1000, 'Sube empujando con la pierna de adelante']],
+  bg: () => rect(28, 160, 48, 9, 'cushion') + ln([40, 169], [40, 205], 'mach') + ln([66, 169], [66, 205], 'mach'),
+  after: (B) => db(B.hand), fg: (B) => angleMark(B.knee, B.hip, B.ankle, 26),
+});
+
+/* ── Zancadas ── */
+const wlTop = { x: 130, y: 205, t: 5, th: 170, sh: 185, f: 90, th2: 210, sh2: 210, f2: 150, ua: 180, fa: 180, hd: 0 };
+const wlBot = P(wlTop, { th: 100, sh: 195, th2: 215, sh2: 290, f2: 170 });
+const lunge = sideAnim({
+  mus: ['quad', 'glute'], ghost: wlBot, ghostLabel: 'Rodilla trasera cerca del suelo',
+  steps: [[wlTop, 500, 'Paso largo, torso erguido'], [wlBot, 1300, 'Baja la rodilla trasera'], [wlBot, 300, 'Rodilla delantera sobre el pie'], [wlTop, 1000, 'Empuja y sube']],
+  after: (B) => db(B.hand), fg: (B) => angleMark(B.knee, B.hip, B.ankle, 26),
+});
+
+/* ── Puente de glúteo ── */
+const gbLo = { x: 64, y: 197, t: -90, th: 42, sh: 160, f: 90, ua: 95, fa: 90, hd: 10 };
+const gbHi = P(gbLo, { t: -112, th: 70, sh: 175 });
+const glutebridge = sideAnim({
+  anchor: 'shoulder', mus: ['glute', '~ham'], ghost: gbHi, ghostLabel: 'Cadera extendida',
+  steps: [[gbLo, 500, 'Espalda en el suelo, barra en la cadera'], [gbHi, 900, 'Sube la cadera'], [gbHi, 500, 'Aprieta 1 s'], [gbLo, 1200, 'Baja controlado']],
+  after: (B) => plate(add(B.hip, [0, -12])),
+});
+
+/* ── Máquina de glúteo (patada) ── */
+const gmLo = { x: 100, y: 140, t: 85, th: 175, sh: 260, f: 200, th2: 180, sh2: 270, f2: 270, ua: 180, fa: 180, hd: 0 };
+const gmHi = P(gmLo, { th: 275, sh: 230, f: 300 });
+const glutemachine = sideAnim({
+  anchor: 'hip', mus: ['glute', '~ham'], ghost: gmHi, ghostLabel: 'Extensión de cadera',
+  steps: [[gmLo, 400, 'Rodilla de apoyo en el cojín'], [gmHi, 900, 'Empuja hacia atrás y arriba'], [gmHi, 400, 'Aprieta 1 s'], [gmLo, 1200, 'Regresa controlado']],
+  bg: () => rect(40, 184, 130, 9, 'cushion') + ln([60, 193], [60, 205], 'mach') + ln([150, 193], [150, 205], 'mach'),
+  after: (B) => quad(mv(B.ankle, 200, 4), 110, 22, 7, 'platform'),
+});
+
+/* ── Curl femoral (tumbado) ── */
+const lcStraight = { x: 110, y: 150, t: -90, th: 90, sh: 90, f: 180, ua: 180, fa: 150, hd: 0 };
+const lcBent = P(lcStraight, { sh: -20, f: 60 });
+const legcurl = sideAnim({
+  anchor: 'hip', mus: ['quad', '~glute'], ghost: lcBent, ghostLabel: 'Talones al glúteo',
+  steps: [[lcStraight, 400, 'Rodilla alineada con el eje de la máquina'], [lcBent, 900, 'Lleva los talones hacia el glúteo'], [lcBent, 300, 'Sin despegar la cadera'], [lcStraight, 1700, 'Baja en 2-3 s']],
+  bg: () => rect(36, 157, 116, 9, 'cushion') + ln([60, 166], [60, 205], 'mach') + ln([140, 166], [140, 205], 'mach'),
+  after: (B) => circ(add(B.ankle, [0, -9]), 6, 'cushion'),
+});
+
+/* ── Abductora / aductora (frontal, sentado) ── */
+const abIn2 = P(FS, { hy: 150, ks: 0.3, fxL: 100, fyL: 205, fxR: 120, fyR: 205, aL: 30, bL: 10, aR: 30, bR: 10 });
+const abOut2 = P(abIn2, { fxL: 70, fxR: 150 });
+const seat = () => rect(84, 152, 52, 8, 'cushion') + ln([110, 160], [110, 205], 'mach thin');
+const abductor = frontAnim({
+  view: 'Vista frontal (sentado)', mus: ['gmed'], ghost: abOut2, ghostLabel: 'Apertura',
+  steps: [[abIn2, 400, 'Torso un poco inclinado al frente'], [abOut2, 900, 'Abre las piernas controlado'], [abOut2, 400, 'Aguanta 1 s'], [abIn2, 1200, 'Cierra sin rebotar']],
+  bg: seat, after: (B) => rect(B.lK[0] - 9, B.lK[1] - 6, 5, 16, 'cushion', 2) + rect(B.rK[0] + 4, B.rK[1] - 6, 5, 16, 'cushion', 2),
+});
+const adductor = frontAnim({
+  view: 'Vista frontal (sentado)', mus: ['adductors'], ghost: abIn2, ghostLabel: 'Cierre',
+  steps: [[abOut2, 400, 'Piernas abiertas, estiramiento'], [abIn2, 900, 'Cierra controlado'], [abIn2, 400, 'Aprieta 1 s'], [abOut2, 1200, 'Abre hasta sentir el estiramiento']],
+  bg: seat, after: (B) => rect(B.lK[0] + 4, B.lK[1] - 6, 5, 16, 'cushion', 2) + rect(B.rK[0] - 9, B.rK[1] - 6, 5, 16, 'cushion', 2),
+});
+
+/* ── Bird dog ── */
+const bdIn = { x: 105, y: 155, t: 90, th: 180, sh: 270, f: 270, ua: 180, fa: 180, hd: 15 };
+const bdOut = P(bdIn, { ua: 85, fa: 85, th2: 270, sh2: 270, f2: 270 });
+const birddog = sideAnim({
+  anchor: 'hip', mus: ['lumbar', 'abs', '~glute'], ghost: bdOut, ghostLabel: 'Brazo y pierna contrarios',
+  steps: [[bdIn, 500, 'En cuadrupedia, espalda neutra'], [bdOut, 1000, 'Extiende brazo y pierna contrarios'], [bdOut, 800, 'Cadera estable'], [bdIn, 900, 'Regresa y cambia de lado']],
+});
+
+/* ── Press con mancuernas sentado / máquina de hombro ── */
+const spBot = { x: 100, y: 165, t: -4, th: 85, sh: 180, f: 90, ua: 160, fa: -10, hd: 0 };
+const spTop = P(spBot, { ua: 5, fa: 0 });
+const seatedPress = (machine: boolean) => sideAnim({
+  anchor: 'hip', mus: ['delt', '~triceps'], ghost: spTop, ghostLabel: 'Arriba',
+  steps: [[spBot, 500, machine ? 'Agarres a la altura de los hombros' : 'Mancuernas a la altura de las orejas'], [spTop, 1000, 'Empuja hacia arriba'], [spTop, 300, 'Sin arquear la espalda'], [spBot, 1600, 'Baja controlado']],
+  bg: (B) => seatBack(B.hip, -4) + (machine ? ln([60, 20], [60, 205], 'mach') : ''),
+  after: (B) => (machine ? ln(B.hand, [60, B.hand[1] + 10], 'mach thin') + circ(B.hand, 4, 'head') : db(B.hand)),
+});
+
+/* ── Elevación lateral en polea / máquina (frontal) ── */
+const clDown = P(FS, { aL: 30, bL: -60, aR: 18, bR: 12 });
+const clUp = P(clDown, { aR: 88, bR: 84 });
+const cablelateral = frontAnim({
+  mus: ['delts'], ghost: clUp, ghostLabel: 'Altura del hombro',
+  steps: [[clDown, 400, 'Polea baja, cable por delante'], [clUp, 900, 'Sube hasta la altura del hombro'], [clUp, 300, 'Sin inclinarte'], [clDown, 1600, 'Baja en 2 s']],
+  bg: () => ln([40, 120], [40, 205], 'mach thin'), between: (B) => cable([44, 198], B.rHd),
+});
+const mlDown = P(FS, { hy: 150, ks: 0.3, fxL: 96, fxR: 124, aL: 12, bL: 12, aR: 12, bR: 12 });
+const mlUp = P(mlDown, { aL: 85, bL: 85, aR: 85, bR: 85 });
+const machinelateral = frontAnim({
+  view: 'Vista frontal (sentado)', mus: ['delts'], ghost: mlUp, ghostLabel: 'Altura del hombro',
+  steps: [[mlDown, 400, 'Hombro alineado con el eje'], [mlUp, 900, 'Sube controlado'], [mlUp, 300, 'Aguanta arriba'], [mlDown, 1500, 'Baja despacio']],
+  bg: seat, after: (B) => rect(B.lE[0] - 4, B.lE[1] - 8, 8, 16, 'cushion', 3) + rect(B.rE[0] - 4, B.rE[1] - 8, 8, 16, 'cushion', 3),
+});
+
+/* ── Pec deck invertido (frontal) ── */
+const rpIn = P(FS, { hy: 150, ks: 0.3, fxL: 96, fxR: 124, aL: -35, bL: -10, aR: -35, bR: -10 });
+const rpOut = P(rpIn, { aL: 90, bL: 92, aR: 90, bR: 92 });
+const reversepecdeck = frontAnim({
+  view: 'Vista frontal (sentado)', mus: ['delts', '~traps'], ghost: rpOut, ghostLabel: 'Línea de los hombros',
+  steps: [[rpIn, 400, 'Pecho contra el respaldo'], [rpOut, 900, 'Abre hasta la línea de los hombros'], [rpOut, 300, 'Junta las escápulas'], [rpIn, 1500, 'Regresa controlado']],
+  bg: seat, after: (B) => circ(B.lHd, 4.5, 'head') + circ(B.rHd, 4.5, 'head'),
+});
+
 export const ANIMS: Record<string, AnimDef> = {
   squat, pullup, boxjump, legpress,
   bench: bench(false), closegrip: bench(true), incline, dips, fly, pushdown, overhead, abwheel,
@@ -590,6 +877,9 @@ export const ANIMS: Record<string, AnimDef> = {
   bbrow, cablerow, facepull, curl: curl(false), hammer: curl(true), hangingraise,
   lateralhop, dropjump, stepup, hipthrust, nordic, soleus, tibialis, monster, copenhagen, deadbug,
   ohp, lateralraise, reversefly, inclinecurl, farmer, sideplank,
+  machinechest, decline, skull, dboverhead, plank, bodysaw, squatjump, broadjump, hack, trapbar, goodmorning, legpresscalf,
+  latpulldown, dbrow, chestrow, dipraise, reversecrunch, lateralhop2, bulgarian, lunge, glutebridge, glutemachine, legcurl,
+  abductor, adductor, birddog, seatedpress: seatedPress(false), machineshoulder: seatedPress(true), cablelateral, machinelateral, reversepecdeck,
 };
 
 export const ease = (k: number) => -(Math.cos(Math.PI * k) - 1) / 2;

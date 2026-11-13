@@ -13,7 +13,7 @@ const list: Exercise[] = [
     errors: ['Bajar sin control y perder la posición de hombros.'], progression: 'double', increment: 2, anim: 'bench' },
   { id: 'machine-chest', name: 'Press de pecho en máquina', primary: ['Pecho'], secondary: ['Tríceps'], equipment: 'Máquina',
     cues: ['Ajusta el asiento para que los agarres queden a media altura del pecho.', 'Espalda pegada al respaldo todo el recorrido.'],
-    errors: ['Bloquear los codos de golpe arriba.'], progression: 'double', increment: 5 },
+    errors: ['Bloquear los codos de golpe arriba.'], progression: 'double', increment: 5 , anim: 'machinechest' },
 
   {
     id: 'incline-db', name: 'Press inclinado con mancuernas', primary: ['Pecho superior'], secondary: ['Deltoide anterior', 'Tríceps'], equipment: 'Mancuernas',
@@ -33,7 +33,7 @@ const list: Exercise[] = [
     progression: 'double', increment: 2.5, alts: ['decline-press', 'assisted-dips'], anim: 'dips',
   },
   { id: 'decline-press', name: 'Press declinado', primary: ['Pecho inferior'], secondary: ['Tríceps'], equipment: 'Barra',
-    cues: ['Pies bien sujetos, la barra baja a la parte baja del pecho.', 'Controla la bajada.'], errors: ['Rebotar la barra.'], progression: 'double', increment: 2.5 },
+    cues: ['Pies bien sujetos, la barra baja a la parte baja del pecho.', 'Controla la bajada.'], errors: ['Rebotar la barra.'], progression: 'double', increment: 2.5 , anim: 'decline' },
   { id: 'assisted-dips', name: 'Fondos asistidos', primary: ['Pecho inferior', 'Tríceps'], equipment: 'Máquina',
     cues: ['Misma técnica que los fondos; la asistencia solo quita peso.', 'Progresa reduciendo la asistencia.'], errors: ['Usar demasiada asistencia y no sentir el esfuerzo.'], progression: 'double', increment: 5, anim: 'dips' },
 
@@ -64,9 +64,9 @@ const list: Exercise[] = [
     progression: 'double', increment: 2.5, alts: ['skullcrusher', 'db-overhead-ext'], anim: 'overhead',
   },
   { id: 'skullcrusher', name: 'Press francés', primary: ['Tríceps'], equipment: 'Barra EZ',
-    cues: ['Baja la barra hacia la frente o un poco detrás.', 'Solo se mueven los codos.'], errors: ['Abrir los codos.'], progression: 'double', increment: 2.5 },
+    cues: ['Baja la barra hacia la frente o un poco detrás.', 'Solo se mueven los codos.'], errors: ['Abrir los codos.'], progression: 'double', increment: 2.5 , anim: 'skull' },
   { id: 'db-overhead-ext', name: 'Extensión con mancuerna sobre la cabeza', primary: ['Tríceps (cabeza larga)'], equipment: 'Mancuerna',
-    cues: ['Sujeta la mancuerna con ambas manos detrás de la cabeza.', 'Codos al frente.'], errors: ['Arquear la espalda baja.'], progression: 'double', increment: 2 },
+    cues: ['Sujeta la mancuerna con ambas manos detrás de la cabeza.', 'Codos al frente.'], errors: ['Arquear la espalda baja.'], progression: 'double', increment: 2 , anim: 'dboverhead' },
 
   {
     id: 'ab-wheel', name: 'Rueda abdominal', primary: ['Core'], equipment: 'Rueda', bodyweight: true,
@@ -75,9 +75,9 @@ const list: Exercise[] = [
     progression: 'reps', alts: ['plank', 'body-saw'], anim: 'abwheel',
   },
   { id: 'plank', name: 'Plancha', primary: ['Core'], equipment: 'Peso corporal', bodyweight: true, unit: 's',
-    cues: ['Codos bajo los hombros, cuerpo en línea recta.', 'Aprieta glúteos y abdomen.'], errors: ['Cadera caída o demasiado alta.'], progression: 'time' },
+    cues: ['Codos bajo los hombros, cuerpo en línea recta.', 'Aprieta glúteos y abdomen.'], errors: ['Cadera caída o demasiado alta.'], progression: 'time' , anim: 'plank' },
   { id: 'body-saw', name: 'Body saw', primary: ['Core'], equipment: 'Deslizadores', bodyweight: true,
-    cues: ['En plancha, desliza el cuerpo atrás y adelante desde los hombros.', 'Espalda neutra.'], errors: ['Hundir la cadera.'], progression: 'reps' },
+    cues: ['En plancha, desliza el cuerpo atrás y adelante desde los hombros.', 'Espalda neutra.'], errors: ['Hundir la cadera.'], progression: 'reps' , anim: 'bodysaw' },
 
   /* ───────────── PIERNA A · MARTES ───────────── */
   {
@@ -96,7 +96,7 @@ const list: Exercise[] = [
     progression: 'plyo', alts: ['squat-jump'],
   },
   { id: 'squat-jump', name: 'Squat jump', primary: ['Glúteo', 'Cuádriceps'], equipment: 'Peso corporal', bodyweight: true,
-    cues: ['Media sentadilla y salto máximo.', 'Aterriza suave y reinicia la posición antes del siguiente.'], errors: ['Encadenar saltos sin control.'], progression: 'plyo' },
+    cues: ['Media sentadilla y salto máximo.', 'Aterriza suave y reinicia la posición antes del siguiente.'], errors: ['Encadenar saltos sin control.'], progression: 'plyo' , anim: 'squatjump' },
 
   {
     id: 'sl-broad', name: 'Salto horizontal a una pierna', primary: ['Glúteo', 'Cuádriceps'], secondary: ['Estabilizadores de cadera'], equipment: 'Peso corporal', bodyweight: true, perSide: true,
@@ -105,7 +105,7 @@ const list: Exercise[] = [
     progression: 'plyo', alts: ['broad-jump'], anim: 'slbroad',
   },
   { id: 'broad-jump', name: 'Salto largo a pies juntos', primary: ['Glúteo', 'Cuádriceps'], equipment: 'Peso corporal', bodyweight: true,
-    cues: ['Brazos atrás y salto hacia adelante extendiendo la cadera.', 'Aterriza suave y estable.'], errors: ['Aterrizar con las rodillas hacia dentro.'], progression: 'plyo' },
+    cues: ['Brazos atrás y salto hacia adelante extendiendo la cadera.', 'Aterriza suave y estable.'], errors: ['Aterrizar con las rodillas hacia dentro.'], progression: 'plyo' , anim: 'broadjump' },
 
   {
     id: 'back-squat', name: 'Sentadilla trasera', primary: ['Cuádriceps', 'Glúteo'], secondary: ['Aductores', 'Lumbar'], equipment: 'Barra', anim: 'squat',
@@ -114,7 +114,7 @@ const list: Exercise[] = [
     progression: 'double', increment: 5, alts: ['hack-squat', 'leg-press'],
   },
   { id: 'hack-squat', name: 'Hack squat', primary: ['Cuádriceps', 'Glúteo'], equipment: 'Máquina',
-    cues: ['Espalda pegada al respaldo, pies a la anchura de hombros.', 'Baja hasta al menos 90° de rodilla.'], errors: ['Despegar los talones.'], progression: 'double', increment: 5 },
+    cues: ['Espalda pegada al respaldo, pies a la anchura de hombros.', 'Baja hasta al menos 90° de rodilla.'], errors: ['Despegar los talones.'], progression: 'double', increment: 5 , anim: 'hack' },
   {
     id: 'leg-press', name: 'Prensa 45°', primary: ['Cuádriceps'], secondary: ['Glúteo'], equipment: 'Máquina', anim: 'legpress',
     cues: ['Pies en el centro de la plataforma, a la anchura de los hombros.', 'Baja hasta que la rodilla quede en unos 90° sin que la lumbar se despegue.', 'Empuja con todo el pie, sin despegar los talones.'],
@@ -129,9 +129,9 @@ const list: Exercise[] = [
     progression: 'double', increment: 5, alts: ['trap-bar-dl', 'good-morning'], anim: 'rdl',
   },
   { id: 'trap-bar-dl', name: 'Peso muerto con trap bar', primary: ['Glúteo', 'Cuádriceps', 'Isquiotibiales'], equipment: 'Trap bar',
-    cues: ['Cadera algo más alta que en sentadilla, pecho arriba.', 'Empuja el suelo y extiende cadera y rodillas a la vez.'], errors: ['Redondear la espalda.'], progression: 'double', increment: 5 },
+    cues: ['Cadera algo más alta que en sentadilla, pecho arriba.', 'Empuja el suelo y extiende cadera y rodillas a la vez.'], errors: ['Redondear la espalda.'], progression: 'double', increment: 5 , anim: 'trapbar' },
   { id: 'good-morning', name: 'Good morning', primary: ['Isquiotibiales', 'Lumbar'], equipment: 'Barra',
-    cues: ['Barra en el trapecio, cadera atrás con la espalda neutra.', 'Usa poco peso y mucho control.'], errors: ['Bajar más allá de donde mantienes la espalda recta.'], progression: 'double', increment: 2.5 },
+    cues: ['Barra en el trapecio, cadera atrás con la espalda neutra.', 'Usa poco peso y mucho control.'], errors: ['Bajar más allá de donde mantienes la espalda recta.'], progression: 'double', increment: 2.5 , anim: 'goodmorning' },
 
   {
     id: 'standing-calf', name: 'Gemelo de pie, pesado', primary: ['Gemelos'], equipment: 'Máquina',
@@ -140,7 +140,7 @@ const list: Exercise[] = [
     progression: 'double', increment: 5, alts: ['leg-press-calf', 'smith-calf'], anim: 'calf',
   },
   { id: 'leg-press-calf', name: 'Gemelo en prensa', primary: ['Gemelos'], equipment: 'Máquina',
-    cues: ['Solo la parte delantera del pie en la plataforma.', 'Rodillas extendidas sin bloquear.'], errors: ['Rebotar.'], progression: 'double', increment: 10 },
+    cues: ['Solo la parte delantera del pie en la plataforma.', 'Rodillas extendidas sin bloquear.'], errors: ['Rebotar.'], progression: 'double', increment: 10 , anim: 'legpresscalf' },
   { id: 'smith-calf', name: 'Gemelo en Smith', primary: ['Gemelos'], equipment: 'Smith',
     cues: ['Parte delantera del pie sobre un disco o escalón.', 'Pausa abajo.'], errors: ['Recorrido corto.'], progression: 'double', increment: 5, anim: 'calf' },
 
@@ -159,7 +159,7 @@ const list: Exercise[] = [
     progression: 'double', increment: 2.5, alts: ['lat-pulldown', 'assisted-pullup'],
   },
   { id: 'lat-pulldown', name: 'Jalón al pecho', primary: ['Dorsal'], secondary: ['Bíceps'], equipment: 'Polea',
-    cues: ['Torso apenas inclinado atrás.', 'Lleva la barra a la parte alta del pecho tirando con los codos.'], errors: ['Tirar con impulso del torso.'], progression: 'double', increment: 5 },
+    cues: ['Torso apenas inclinado atrás.', 'Lleva la barra a la parte alta del pecho tirando con los codos.'], errors: ['Tirar con impulso del torso.'], progression: 'double', increment: 5 , anim: 'latpulldown' },
   { id: 'assisted-pullup', name: 'Dominada asistida', primary: ['Dorsal'], secondary: ['Bíceps'], equipment: 'Máquina', anim: 'pullup',
     cues: ['Misma técnica que la dominada.', 'Progresa reduciendo la asistencia.'], errors: ['Medio rango.'], progression: 'double', increment: 5 },
 
@@ -172,7 +172,7 @@ const list: Exercise[] = [
   { id: 't-bar-row', name: 'Remo en T', primary: ['Dorsal', 'Romboides'], equipment: 'Barra en T',
     cues: ['Pecho arriba, espalda neutra.', 'Tira hacia el abdomen.'], errors: ['Redondear la espalda.'], progression: 'double', increment: 2.5, anim: 'bbrow' },
   { id: 'db-row', name: 'Remo con mancuerna', primary: ['Dorsal'], equipment: 'Mancuerna', perSide: true,
-    cues: ['Apoyo en banco, espalda plana.', 'Lleva el codo hacia la cadera.'], errors: ['Girar el torso.'], progression: 'double', increment: 2 },
+    cues: ['Apoyo en banco, espalda plana.', 'Lleva el codo hacia la cadera.'], errors: ['Girar el torso.'], progression: 'double', increment: 2 , anim: 'dbrow' },
 
   {
     id: 'cable-row', name: 'Remo sentado en polea', primary: ['Romboides', 'Dorsal'], secondary: ['Bíceps'], equipment: 'Polea',
@@ -183,7 +183,7 @@ const list: Exercise[] = [
   { id: 'machine-row', name: 'Remo en máquina', primary: ['Romboides', 'Dorsal'], equipment: 'Máquina',
     cues: ['Pecho contra el apoyo.', 'Aprieta las escápulas atrás.'], errors: ['Recorrido corto.'], progression: 'double', increment: 5, anim: 'cablerow' },
   { id: 'chest-row', name: 'Remo con apoyo en pecho', primary: ['Romboides', 'Dorsal'], equipment: 'Mancuernas',
-    cues: ['Banco inclinado, pecho apoyado.', 'Tira con los codos hacia atrás.'], errors: ['Despegar el pecho.'], progression: 'double', increment: 2 },
+    cues: ['Banco inclinado, pecho apoyado.', 'Tira con los codos hacia atrás.'], errors: ['Despegar el pecho.'], progression: 'double', increment: 2 , anim: 'chestrow' },
 
   {
     id: 'face-pull', name: 'Face pull', primary: ['Deltoide posterior'], secondary: ['Manguito rotador'], equipment: 'Polea',
@@ -221,9 +221,9 @@ const list: Exercise[] = [
     progression: 'reps', alts: ['dip-leg-raise', 'reverse-crunch'], anim: 'hangingraise',
   },
   { id: 'dip-leg-raise', name: 'Elevación de piernas en paralelas', primary: ['Core (abdomen inferior)'], equipment: 'Paralelas', bodyweight: true,
-    cues: ['Espalda apoyada, sube las rodillas al pecho.', 'Enrolla la pelvis arriba.'], errors: ['Balancear.'], progression: 'reps' },
+    cues: ['Espalda apoyada, sube las rodillas al pecho.', 'Enrolla la pelvis arriba.'], errors: ['Balancear.'], progression: 'reps' , anim: 'dipraise' },
   { id: 'reverse-crunch', name: 'Crunch inverso', primary: ['Core (abdomen inferior)'], equipment: 'Peso corporal', bodyweight: true,
-    cues: ['Tumbado, lleva las rodillas al pecho despegando la cadera.', 'Baja despacio.'], errors: ['Impulsarte con las piernas.'], progression: 'reps' },
+    cues: ['Tumbado, lleva las rodillas al pecho despegando la cadera.', 'Baja despacio.'], errors: ['Impulsarte con las piernas.'], progression: 'reps' , anim: 'reversecrunch' },
 
   /* ───────────── PIERNA B · JUEVES ───────────── */
   {
@@ -233,7 +233,7 @@ const list: Exercise[] = [
     progression: 'plyo', alts: ['lateral-hop-2'], anim: 'lateralhop',
   },
   { id: 'lateral-hop-2', name: 'Saltos laterales a dos pies', primary: ['Gemelos', 'Estabilizadores de cadera'], equipment: 'Peso corporal', bodyweight: true,
-    cues: ['Salta de lado a lado sobre una línea.', 'Contactos cortos.'], errors: ['Saltos pesados y lentos.'], progression: 'plyo' },
+    cues: ['Salta de lado a lado sobre una línea.', 'Contactos cortos.'], errors: ['Saltos pesados y lentos.'], progression: 'plyo' , anim: 'lateralhop2' },
 
   {
     id: 'drop-jump', name: 'Drop jump (cajón bajo)', primary: ['Gemelos', 'Cuádriceps'], secondary: ['Tendón de Aquiles'], equipment: 'Cajón 20-30 cm', bodyweight: true,
@@ -249,9 +249,9 @@ const list: Exercise[] = [
     progression: 'double', increment: 2, alts: ['bulgarian', 'walking-lunge'], anim: 'stepup',
   },
   { id: 'bulgarian', name: 'Sentadilla búlgara', primary: ['Cuádriceps', 'Glúteo'], equipment: 'Mancuernas', perSide: true,
-    cues: ['Pie trasero en el banco, torso un poco inclinado.', 'Baja recto hasta que la rodilla trasera casi toque el suelo.'], errors: ['Pie delantero demasiado cerca del banco.'], progression: 'double', increment: 2 },
+    cues: ['Pie trasero en el banco, torso un poco inclinado.', 'Baja recto hasta que la rodilla trasera casi toque el suelo.'], errors: ['Pie delantero demasiado cerca del banco.'], progression: 'double', increment: 2 , anim: 'bulgarian' },
   { id: 'walking-lunge', name: 'Zancadas caminando', primary: ['Cuádriceps', 'Glúteo'], equipment: 'Mancuernas', perSide: true,
-    cues: ['Paso largo, rodilla trasera cerca del suelo.', 'Torso erguido.'], errors: ['Rodilla delantera hacia dentro.'], progression: 'double', increment: 2 },
+    cues: ['Paso largo, rodilla trasera cerca del suelo.', 'Torso erguido.'], errors: ['Rodilla delantera hacia dentro.'], progression: 'double', increment: 2 , anim: 'lunge' },
 
   {
     id: 'hip-thrust', name: 'Hip thrust', primary: ['Glúteo'], secondary: ['Isquiotibiales'], equipment: 'Barra + banco',
@@ -260,9 +260,9 @@ const list: Exercise[] = [
     progression: 'double', increment: 5, alts: ['glute-bridge', 'glute-machine'], anim: 'hipthrust',
   },
   { id: 'glute-bridge', name: 'Puente de glúteo con barra', primary: ['Glúteo'], equipment: 'Barra',
-    cues: ['Espalda en el suelo, barra sobre la cadera.', 'Sube y aprieta 1 s.'], errors: ['Empujar con la espalda baja.'], progression: 'double', increment: 5 },
+    cues: ['Espalda en el suelo, barra sobre la cadera.', 'Sube y aprieta 1 s.'], errors: ['Empujar con la espalda baja.'], progression: 'double', increment: 5 , anim: 'glutebridge' },
   { id: 'glute-machine', name: 'Máquina de glúteo', primary: ['Glúteo'], equipment: 'Máquina',
-    cues: ['Ajusta la máquina a tu cadera.', 'Aprieta arriba 1 s.'], errors: ['Recorrido corto.'], progression: 'double', increment: 5 },
+    cues: ['Ajusta la máquina a tu cadera.', 'Aprieta arriba 1 s.'], errors: ['Recorrido corto.'], progression: 'double', increment: 5 , anim: 'glutemachine' },
 
   {
     id: 'nordic', name: 'Curl nórdico', primary: ['Isquiotibiales'], equipment: 'Peso corporal', bodyweight: true,
@@ -271,7 +271,7 @@ const list: Exercise[] = [
     progression: 'reps', alts: ['leg-curl'], anim: 'nordic',
   },
   { id: 'leg-curl', name: 'Curl femoral en máquina', primary: ['Isquiotibiales'], equipment: 'Máquina',
-    cues: ['Rodilla alineada con el eje de la máquina.', 'Baja en 2-3 s.'], errors: ['Despegar la cadera.'], progression: 'double', increment: 5 },
+    cues: ['Rodilla alineada con el eje de la máquina.', 'Baja en 2-3 s.'], errors: ['Despegar la cadera.'], progression: 'double', increment: 5 , anim: 'legcurl' },
 
   {
     id: 'seated-soleus', name: 'Sóleo sentado', primary: ['Sóleo'], equipment: 'Máquina',
@@ -296,7 +296,7 @@ const list: Exercise[] = [
     progression: 'reps', alts: ['abductor-machine'], anim: 'monster',
   },
   { id: 'abductor-machine', name: 'Máquina abductora', primary: ['Glúteo medio'], equipment: 'Máquina',
-    cues: ['Torso ligeramente inclinado al frente.', 'Abre controlado y aguanta 1 s.'], errors: ['Rebotar.'], progression: 'double', increment: 5 },
+    cues: ['Torso ligeramente inclinado al frente.', 'Abre controlado y aguanta 1 s.'], errors: ['Rebotar.'], progression: 'double', increment: 5 , anim: 'abductor' },
 
   {
     id: 'copenhagen', name: 'Plancha Copenhague', primary: ['Aductores'], secondary: ['Core'], equipment: 'Banco', bodyweight: true, perSide: true, unit: 's',
@@ -305,7 +305,7 @@ const list: Exercise[] = [
     progression: 'time', alts: ['adductor-machine'], anim: 'copenhagen',
   },
   { id: 'adductor-machine', name: 'Máquina aductora', primary: ['Aductores'], equipment: 'Máquina',
-    cues: ['Cierra controlado.', 'Abre hasta sentir el estiramiento.'], errors: ['Rebotar.'], progression: 'double', increment: 5 },
+    cues: ['Cierra controlado.', 'Abre hasta sentir el estiramiento.'], errors: ['Rebotar.'], progression: 'double', increment: 5 , anim: 'adductor' },
 
   {
     id: 'dead-bug', name: 'Dead bug', primary: ['Core'], equipment: 'Peso corporal', bodyweight: true,
@@ -314,7 +314,7 @@ const list: Exercise[] = [
     progression: 'reps', alts: ['bird-dog'], anim: 'deadbug',
   },
   { id: 'bird-dog', name: 'Bird dog', primary: ['Core', 'Lumbar'], equipment: 'Peso corporal', bodyweight: true,
-    cues: ['En cuadrupedia, extiende brazo y pierna contrarios.', 'Cadera estable.'], errors: ['Girar la cadera.'], progression: 'reps' },
+    cues: ['En cuadrupedia, extiende brazo y pierna contrarios.', 'Cadera estable.'], errors: ['Girar la cadera.'], progression: 'reps' , anim: 'birddog' },
 
   /* ───────────── HOMBRO + BRAZOS · VIERNES ───────────── */
   {
@@ -324,9 +324,9 @@ const list: Exercise[] = [
     progression: 'double', increment: 2.5, alts: ['seated-db-press', 'machine-shoulder'], anim: 'ohp',
   },
   { id: 'seated-db-press', name: 'Press con mancuernas sentado', primary: ['Deltoides'], equipment: 'Mancuernas',
-    cues: ['Respaldo casi vertical.', 'Baja hasta la altura de las orejas.'], errors: ['Arquear la espalda.'], progression: 'double', increment: 2 },
+    cues: ['Respaldo casi vertical.', 'Baja hasta la altura de las orejas.'], errors: ['Arquear la espalda.'], progression: 'double', increment: 2 , anim: 'seatedpress' },
   { id: 'machine-shoulder', name: 'Press de hombro en máquina', primary: ['Deltoides'], equipment: 'Máquina',
-    cues: ['Agarres a la altura de los hombros al inicio.', 'Espalda pegada al respaldo.'], errors: ['Recorrido corto.'], progression: 'double', increment: 5 },
+    cues: ['Agarres a la altura de los hombros al inicio.', 'Espalda pegada al respaldo.'], errors: ['Recorrido corto.'], progression: 'double', increment: 5 , anim: 'machineshoulder' },
 
   {
     id: 'lateral-raise', name: 'Elevaciones laterales', primary: ['Deltoide medio'], equipment: 'Mancuernas',
@@ -335,9 +335,9 @@ const list: Exercise[] = [
     progression: 'double', increment: 1, alts: ['cable-lateral', 'machine-lateral'], anim: 'lateralraise',
   },
   { id: 'cable-lateral', name: 'Elevación lateral en polea', primary: ['Deltoide medio'], equipment: 'Polea', perSide: true,
-    cues: ['Polea baja, cable por delante del cuerpo.', 'Sube hasta la altura del hombro.'], errors: ['Inclinarse.'], progression: 'double', increment: 1.25 },
+    cues: ['Polea baja, cable por delante del cuerpo.', 'Sube hasta la altura del hombro.'], errors: ['Inclinarse.'], progression: 'double', increment: 1.25 , anim: 'cablelateral' },
   { id: 'machine-lateral', name: 'Elevación lateral en máquina', primary: ['Deltoide medio'], equipment: 'Máquina',
-    cues: ['Hombro alineado con el eje de la máquina.', 'Sube controlado.'], errors: ['Recorrido corto.'], progression: 'double', increment: 2.5 },
+    cues: ['Hombro alineado con el eje de la máquina.', 'Sube controlado.'], errors: ['Recorrido corto.'], progression: 'double', increment: 2.5 , anim: 'machinelateral' },
 
   {
     id: 'reverse-fly', name: 'Pájaros (reverse fly)', primary: ['Deltoide posterior'], secondary: ['Romboides'], equipment: 'Mancuernas',
@@ -346,7 +346,7 @@ const list: Exercise[] = [
     progression: 'double', increment: 1, alts: ['reverse-pec-deck'], anim: 'reversefly',
   },
   { id: 'reverse-pec-deck', name: 'Pec deck invertido', primary: ['Deltoide posterior'], equipment: 'Máquina',
-    cues: ['Pecho contra el respaldo.', 'Abre hasta la línea de los hombros.'], errors: ['Recorrido corto.'], progression: 'double', increment: 2.5 },
+    cues: ['Pecho contra el respaldo.', 'Abre hasta la línea de los hombros.'], errors: ['Recorrido corto.'], progression: 'double', increment: 2.5 , anim: 'reversepecdeck' },
 
   {
     id: 'close-grip', name: 'Press cerrado', primary: ['Tríceps'], secondary: ['Pecho'], equipment: 'Barra',
