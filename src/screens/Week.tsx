@@ -29,7 +29,7 @@ export function Week({ ui }: { ui: UI }) {
         {note && <div className="banner">{note}</div>}
         <span className="muted small">Toca el lápiz de cualquier día para capturar el plan de tu coach.</span>
       </div>
-      {days.map((d) => <DayCard key={d} date={d} ui={ui} />)}
+      {days.map((d) => <DayCard key={d} date={d} ui={ui} allowStart defaultOpen={d === todayKey()} />)}
     </div>
   );
 }
