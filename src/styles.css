@@ -215,6 +215,10 @@ h3 { font-family: var(--f-display); font-weight: 700; font-size: 19px; }
 .box, .carriage { fill: var(--plate); stroke: var(--machine); stroke-width: 3; stroke-linejoin: round; }
 .cushion { fill: var(--cushion); stroke: var(--cushion); stroke-width: 2; stroke-linejoin: round; }
 .platform { fill: var(--machine); stroke: var(--machine); stroke-width: 2; stroke-linejoin: round; }
+.pad { stroke: var(--cushion); stroke-width: 9; stroke-linecap: round; }
+.cable { stroke: var(--machine); stroke-width: 1.6; stroke-dasharray: 3 2; }
+.pulley { fill: var(--surface); stroke: var(--machine); stroke-width: 2.5; }
+.band { stroke: var(--accent); stroke-width: 3; stroke-linecap: round; opacity: .8; }
 .angle { stroke: var(--accent); stroke-width: 2; fill: none; }
 .angt { fill: var(--accent-ink); font: 700 11px var(--f-body); }
 .ghost { opacity: .17; } .ghost .mus, .ghost .musb, .ghost .lat { stroke: var(--figure); fill: var(--figure); }

@@ -1,5 +1,5 @@
 export type Progression = 'double' | 'plyo' | 'reps' | 'time' | 'carry';
-export type AnimId = 'squat' | 'pullup' | 'boxjump' | 'legpress';
+export type AnimId = string;
 
 export interface Exercise {
   id: string;
