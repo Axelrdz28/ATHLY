@@ -86,9 +86,19 @@ export function Home({ ui }: { ui: UI }) {
   } else if (gymDone) {
     cta = <button className="btn big" type="button" onClick={() => ui.openSummary(gymDone.id)}><Icon n="check" /> Completada · ver resumen</button>;
   } else if (!isRest && !run) {
-    cta = <button className="btn primary big" type="button" onClick={() => ui.openRunLog(today)}><Icon n="run" /> Registrar running</button>;
+    cta = (
+      <>
+        <button className="btn primary big" type="button" onClick={() => setState((st) => ({ ...st, runs: { ...st.runs, [today]: { date: today, type: plan.run.type } } }))}><Icon n="check" /> Marcar como hecho</button>
+        <button className="linkbtn" type="button" style={{ alignSelf: 'center' }} onClick={() => ui.openRunLog(today)}>o agregar km y tiempo reales ›</button>
+      </>
+    );
   } else if (!isRest && run) {
-    cta = <button className="btn big" type="button" onClick={() => ui.openRunLog(today)}><Icon n="check" /> Running registrado · {run.km ? `${run.km} km` : 'ver'}</button>;
+    cta = (
+      <>
+        <div className="banner good" style={{ display: 'flex', alignItems: 'center', gap: 8 }}><Icon n="check" size={16} /> <b>Completado</b>{run.km ? ` · ${run.km} km` : ''}{run.minutes ? ` · ${run.minutes} min` : ''}</div>
+        <button className="linkbtn" type="button" style={{ alignSelf: 'center' }} onClick={() => ui.openRunLog(today)}>{run.km ? 'Editar km y tiempo ›' : 'Agregar km y tiempo reales ›'}</button>
+      </>
+    );
   } else {
     cta = <div className="muted small" style={{ textAlign: 'center' }}>Disfruta el descanso. Mañana seguimos.</div>;
   }
