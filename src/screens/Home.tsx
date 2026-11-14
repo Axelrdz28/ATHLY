@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { SESSIONS } from '../data/program';
 import { getEx } from '../data/exercises';
 import type { Prescription, SessionId } from '../data/types';
-import { useStore, type State } from '../lib/store';
+import { setState, useStore, type State } from '../lib/store';
 import { dayPlan, sessionItems, weekInfo, weekNote } from '../lib/plan';
 import { DAY_NAME, DAY_SHORT, dow, fmtLong, mondayOf, todayKey, weekDays } from '../lib/dates';
 import { computePRs, streakWeeks } from '../lib/progress';
@@ -114,11 +114,7 @@ export function Home({ ui }: { ui: UI }) {
         </div>
         {cta}
         {plan.gym && !isRest && (
-          <button type="button" className="runline" onClick={() => ui.openRunLog(today)}>
-            <Icon n="run" />
-            <span className="rl-t">{plan.run.title}<span className="muted"> · {[plan.run.detail, runText(plan.run.km)].filter(Boolean).join(' · ')}</span></span>
-            {run ? <span className="good rl-s"><Icon n="check" size={12} /> {run.km ? `${run.km} km` : 'Hecho'}</span> : <span className="muted rl-s">Marcar <Icon n="chev" size={12} /></span>}
-          </button>
+          <div className="hero-run"><RunRow date={today} ui={ui} /></div>
         )}
       </section>
 
@@ -144,6 +140,39 @@ export function Home({ ui }: { ui: UI }) {
         <span><b className="num">{gymCount}/{gymPlanned}</b><small> gym</small></span>
         <span><b className="num">{prsWeek}</b><small> PR</small></span>
       </button>
+    </div>
+  );
+}
+
+/** Fila de running: casilla para marcar hecho, toque para registrar km reales, lápiz para editar el plan */
+export function RunRow({ date, ui, editPlan = false }: { date: string; ui: UI; editPlan?: boolean }) {
+  const s = useStore();
+  const p = dayPlan(date, s);
+  const run = s.runs[date];
+  const isRest = p.run.type === 'rest';
+  const canLog = !isRest && date <= todayKey();
+  const planText = [p.run.detail, runText(p.run.km)].filter(Boolean).join(' · ');
+  const doneText = run ? [run.km ? `${run.km} km` : 'Hecho', run.minutes ? `${run.minutes} min` : ''].filter(Boolean).join(' · ') : '';
+  const toggle = () => {
+    if (!run) setState((st) => ({ ...st, runs: { ...st.runs, [date]: { date, type: p.run.type } } }));
+    else if (run.km == null && run.minutes == null && !run.notes) setState((st) => { const runs = { ...st.runs }; delete runs[date]; return { ...st, runs }; });
+    else ui.openRunLog(date);
+  };
+  return (
+    <div className="runrow">
+      {canLog ? (
+        <button type="button" className={`check ${run ? 'on' : ''}`} onClick={toggle} aria-pressed={!!run} aria-label={run ? 'Running hecho' : 'Marcar running como hecho'}>
+          {run && <Icon n="check" />}
+        </button>
+      ) : (
+        <span className="rr-ic"><Icon n={isRest ? 'moon' : 'run'} /></span>
+      )}
+      <button type="button" className="rr-main" onClick={() => (canLog ? ui.openRunLog(date) : ui.openRunPlan(date))} disabled={isRest && !editPlan}>
+        <span className="rr-t">{p.run.title}{p.runFromCoach && <span className="pill acc" style={{ marginLeft: 6 }}>coach</span>}</span>
+        <span className="rr-s">{run ? <><b className="good">{doneText}</b>{planText && <span className="muted"> · plan {planText}</span>}</> : <span className="muted">{planText || (isRest ? 'Sin running' : '—')}</span>}</span>
+        {canLog && <span className="rr-hint">{run ? 'Editar km y tiempo ›' : 'Agregar km reales ›'}</span>}
+      </button>
+      {editPlan && <button type="button" className="iconbtn sm" onClick={() => ui.openRunPlan(date)} aria-label="Editar plan de running"><Icon n="edit" /></button>}
     </div>
   );
 }
@@ -175,11 +204,7 @@ export function DayCard({ date, ui, defaultOpen = false, allowStart = false }: {
         <h3>{date === today ? 'Hoy' : DAY_NAME[dow(date)]} <span className="muted small" style={{ fontFamily: 'var(--f-body)', fontWeight: 500 }}>{fmtLong(date).split(' ').slice(1).join(' ')}</span></h3>
         {done && <span className="pill good"><Icon n="check" size={11} /> Gym hecho</span>}
       </div>
-      <div className="dayline">
-        <Icon n={p.run.type === 'rest' ? 'moon' : 'run'} />
-        <span className="dl-t">{p.run.title}{p.runFromCoach && <span className="pill acc" style={{ marginLeft: 6 }}>coach</span>}<span className="muted">{[p.run.detail, runText(p.run.km)].filter(Boolean).length ? ` · ${[p.run.detail, runText(p.run.km)].filter(Boolean).join(' · ')}` : ''}</span></span>
-        <button type="button" className="iconbtn sm" onClick={() => ui.openRunPlan(date)} aria-label="Editar plan de running"><Icon n="edit" /></button>
-      </div>
+      <RunRow date={date} ui={ui} editPlan />
       <div className="dayline">
         <Icon n="lift" />
         {p.gym ? (
