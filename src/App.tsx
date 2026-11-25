@@ -3,6 +3,7 @@ import type { Prescription, SessionId } from './data/types';
 import { SESSIONS } from './data/program';
 import { setState, uid, useStore } from './lib/store';
 import { dayPlan, sessionItems } from './lib/plan';
+import { todayKey } from './lib/dates';
 import { Home, type Tab, type UI } from './screens/Home';
 import { Week } from './screens/Week';
 import { Progress } from './screens/Progress';
@@ -32,7 +33,8 @@ const TABS: { id: Tab; label: string; icon: string }[] = [
 export function App() {
   const s = useStore();
   const [tab, setTab] = useState<Tab>('hoy');
-  const [inWorkout, setInWorkout] = useState(!!s.active);
+  // Solo abre directo el entrenamiento si es de hoy; uno viejo se resuelve desde el inicio
+  const [inWorkout, setInWorkout] = useState(!!s.active && s.active.date === todayKey());
   const [ov, setOv] = useState<Overlay>(null);
   const close = useCallback(() => setOv(null), []);
 

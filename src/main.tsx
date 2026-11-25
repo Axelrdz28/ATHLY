@@ -1,12 +1,15 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './App';
+import { Rescue } from './components/Rescue';
 import { requestPersistence } from './lib/store';
 import './styles.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <Rescue>
+      <App />
+    </Rescue>
   </StrictMode>,
 );
 

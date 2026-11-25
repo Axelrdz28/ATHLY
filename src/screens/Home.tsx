@@ -79,7 +79,7 @@ export function Home({ ui }: { ui: UI }) {
     : isRest ? 'Recupera: el músculo crece cuando descansas' : [plan.run.detail, runText(plan.run.km)].filter(Boolean).join(' · ');
 
   let cta: JSX.Element;
-  if (active) {
+  if (active && active.date === today) {
     cta = <button className="btn primary big" type="button" onClick={ui.openWorkout}><Icon n="play" /> Continuar entrenamiento</button>;
   } else if (plan.gym && !gymDone) {
     cta = <button className="btn primary big" type="button" onClick={() => ui.start(today, plan.gym!)}><Icon n="play" /> Empezar</button>;
@@ -115,6 +115,7 @@ export function Home({ ui }: { ui: UI }) {
         )}
       </div>
       {note && showNote && <div className="note">{note}</div>}
+      {active && active.date !== today && <StaleWorkout />}
 
       <section className="card hero" aria-label="Hoy">
         <span className="lbl">Hoy</span>
@@ -150,6 +151,24 @@ export function Home({ ui }: { ui: UI }) {
         <span><b className="num">{gymCount}/{gymPlanned}</b><small> gym</small></span>
         <span><b className="num">{prsWeek}</b><small> PR</small></span>
       </button>
+    </div>
+  );
+}
+
+/** Entrenamiento que quedó abierto de un día anterior: guardarlo o descartarlo */
+function StaleWorkout() {
+  const s = useStore();
+  const w = s.active!;
+  const end = w.sets.length ? Math.max(...w.sets.map((x) => x.endedAt)) : w.startedAt;
+  const save = () => setState((st) => ({ ...st, workouts: [...st.workouts, { ...w, endedAt: end, live: undefined }].sort((a, b) => a.startedAt - b.startedAt), active: null }));
+  const discard = () => setState((st) => ({ ...st, active: null }));
+  return (
+    <div className="banner">
+      Quedó abierto <b>{SESSIONS[w.sessionId].name}</b> del {fmtLong(w.date)} con {w.sets.length} {w.sets.length === 1 ? "serie" : "series"}.
+      <div className="grid2" style={{ marginTop: 8 }}>
+        <button className="btn sm" type="button" onClick={save} disabled={!w.sets.length}>Guardar como hecho</button>
+        <button className="btn sm" type="button" onClick={discard}>Descartar</button>
+      </div>
     </div>
   );
 }
